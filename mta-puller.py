@@ -3,10 +3,27 @@
 from nyct_gtfs import NYCTFeed
 import datetime
 import pickle
-import os
+import os, sys
 from math import floor
 from time import sleep
+from traceback import format_exception
+import logging
 
+logger = logging.getLogger(__name__)
+handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(handler)
+fh = logging.FileHandler('/home/dietpi/Repos/mta-board/mta-board.log')
+fh.setLevel(logging.WARNING)
+logger.addHandler(fh)
+
+def handle_exception(exc_type, exc_value, exc_traceback):
+    if issubclass(exc_type, KeyboardInterrupt):
+        sys.__excepthook__(exc_type, exc_value, exc_traceback)
+        return
+
+    logger.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
+
+sys.excepthook = handle_exception
 class mtaPuller():
     def __init__(self, *args, **kwargs):
         super(mtaPuller, self).__init__(*args, **kwargs)
@@ -47,4 +64,9 @@ class mtaPuller():
 
 if __name__ == "__main__":
     puller = mtaPuller()
-    puller.run()
+    while True:
+        try:
+            puller.run()
+        except Exception as ex:
+            logging.error(''.join(format_exception(None, ex, ex.__traceback__)))
+            continue

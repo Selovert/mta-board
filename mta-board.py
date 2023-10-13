@@ -11,7 +11,24 @@ sys.path.append("/home/dietpi/Repos/mta-board/rpi-rgb-led-matrix/bindings/python
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from rgbmatrix import graphics
 from PIL import Image
+from traceback import format_exception
+import logging
 
+logger = logging.getLogger(__name__)
+handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(handler)
+fh = logging.FileHandler('/home/dietpi/Repos/mta-board/mta-board.log')
+fh.setLevel(logging.WARNING)
+logger.addHandler(fh)
+
+def handle_exception(exc_type, exc_value, exc_traceback):
+    if issubclass(exc_type, KeyboardInterrupt):
+        sys.__excepthook__(exc_type, exc_value, exc_traceback)
+        return
+
+    logger.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
+
+sys.excepthook = handle_exception
 
 class matrixBoard():
     def __init__(self, *args, **kwargs):
@@ -26,12 +43,13 @@ class matrixBoard():
         options.gpio_slowdown = 3
         # options.pwm_lsb_nanoseconds = 130
         options.limit_refresh_rate_hz = 160
-        options.show_refresh_rate = 1
+        options.show_refresh_rate = 0
         
         self.dir = os.path.dirname(os.path.realpath(__file__))
         self.logo = Image.open(f'{self.dir}/L_logo.png').convert('RGB')
 
         self.matrix = RGBMatrix(options = options)
+        self.runTime = datetime.timedelta(0)
 
     def run(self):
         self.startTime = datetime.datetime.now()
@@ -84,4 +102,9 @@ class matrixBoard():
 
 if __name__ == "__main__":
     board = matrixBoard()
-    board.run()
+    while True:
+        try:
+            board.run()
+        except Exception as ex:
+            logging.error(''.join(format_exception(None, ex, ex.__traceback__)))
+            continue
