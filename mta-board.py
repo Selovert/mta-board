@@ -7,18 +7,14 @@ import time
 import subprocess
 import pickle
 
-from math import floor
-
-sys.path.append("rpi-rgb-led-matrix/bindings/python")
+sys.path.append("/home/dietpi/Repos/mta-board/rpi-rgb-led-matrix/bindings/python")
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from rgbmatrix import graphics
 from PIL import Image
-from PIL import ImageDraw
-from nyct_gtfs import NYCTFeed
+
 
 class matrixBoard():
     def __init__(self, *args, **kwargs):
-        super(matrixBoard, self).__init__(*args, **kwargs)
         # Configuration for the matrix
         options = RGBMatrixOptions()
         options.rows = 32
@@ -27,23 +23,23 @@ class matrixBoard():
         options.chain_length = 1
         options.parallel = 1
         options.hardware_mapping = 'adafruit-hat-pwm'  # If you have an Adafruit HAT: 'adafruit-hat'
-        options.gpio_slowdown = 0
-        options.pwm_lsb_nanoseconds = 130
-        # options.pwm_dither_bits = 2
-        # options.limit_refresh_rate_hz = 120
+        options.gpio_slowdown = 3
+        # options.pwm_lsb_nanoseconds = 130
+        options.limit_refresh_rate_hz = 160
         options.show_refresh_rate = 1
+        
+        self.dir = os.path.dirname(os.path.realpath(__file__))
+        self.logo = Image.open(f'{self.dir}/L_logo.png').convert('RGB')
 
         self.matrix = RGBMatrix(options = options)
-        self.dir = os.path.dirname(os.path.realpath(__file__))
 
     def run(self):
         self.startTime = datetime.datetime.now()
         self.font = graphics.Font()
-        self.font.LoadFont("rpi-rgb-led-matrix/fonts/5x7.bdf")
+        self.font.LoadFont("/home/dietpi/Repos/mta-board/rpi-rgb-led-matrix/fonts/5x7.bdf")
         self.canvas = self.matrix.CreateFrameCanvas()
         self.imgCanvas = self.matrix.CreateFrameCanvas()
         self.imagesLoaded = False
-        self.logo = Image.open(f'{self.dir}/L_logo.png').convert('RGB')
         while True:
             self.readArrivals()
             self.runTime = datetime.datetime.now() - self.startTime
