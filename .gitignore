@@ -1,2 +1,6 @@
+**/__pycache__**
+.vscode**
 rpi-rgb-led-matrix/
 mta-arrivals.cache
+emulator_config.json
+testBoard.py
