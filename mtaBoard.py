@@ -48,7 +48,7 @@ class MatrixBoard():
         options.show_refresh_rate = 0
 
         # EMLUTATOR SETTINGS
-        options.pixel_style = 'circle'
+        # options.pixel_style = 'circle'
         
         self.dir = os.path.dirname(os.path.realpath(__file__)) # directory of this file
         self.logo = Image.open(f'{self.dir}/assets/images/L_logo.png').convert('RGBA') # pull logo from the assets
