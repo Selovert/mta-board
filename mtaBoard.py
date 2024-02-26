@@ -12,7 +12,7 @@ sys.path.append("/home/dietpi/Repos/mta-board/rpi-rgb-led-matrix/bindings/python
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 # from RGBMatrixEmulator import RGBMatrix, RGBMatrixOptions
 
-from mtaPuller import ArrivingTrain
+# from mtaPuller import ArrivingTrain
 
 # region --- initialise logging ---
 logger = logging.getLogger(__name__)
@@ -73,16 +73,18 @@ class MatrixBoard():
             self.runTime:float = runTime.seconds + runTime.microseconds * 10.0**-6 # convert runtime to sec
             self.image = Image.new('RGBA', (self.matrix.width, self.matrix.height)) # new PIL image to build on
 
-            self.readArrivals() # update the train arrivals data from the pickle file
+            # self.readArrivals() # update the train arrivals data from the pickle file
             
 
-            if self.runTime < 5:
-                self.showIP() # default to showing the IP for a few seconds since this is an otherwise-headless setup
-            else:
-                if self.arrivals:
-                    self.showTrains()
-                else:
-                    self.showNoTrainMessage()
+            # if self.runTime < 0:
+            #     self.showIP() # default to showing the IP for a few seconds since this is an otherwise-headless setup
+            # else:
+            #     if self.arrivals:
+            #         self.showTrains()
+            #     else:
+            #         self.showNoTrainMessage()
+
+            self.showTime()
 
 
             self.canvas.Clear() # clear whatever's on the screen
@@ -110,6 +112,14 @@ class MatrixBoard():
         except:
             return None
 
+    def showTime(self):
+        t1 = datetime.datetime.now().strftime("%d.%m.%Y")
+        t2 = datetime.datetime.now().strftime("%H:%M:%S")
+        timeBox1 = TextBox(text=t1, font=self.font)
+        timeBox1.addToImage(self.image, (5, 5))
+        timeBox2 = TextBox(text=t2, font=self.font)
+        timeBox2.addToImage(self.image, (5, 15))
+    
     def showTrains(self):
         """
         Process self.arrivals into info to show on the board.
