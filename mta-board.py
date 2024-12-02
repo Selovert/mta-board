@@ -55,9 +55,10 @@ class matrixBoard():
         self.startTime = datetime.datetime.now()
         self.font = graphics.Font()
         self.font.LoadFont("/home/dietpi/Repos/mta-board/rpi-rgb-led-matrix/fonts/5x7.bdf")
+        self.timeFont = graphics.Font()
+        self.timeFont.LoadFont("/home/dietpi/Repos/mta-board/rpi-rgb-led-matrix/fonts/5x7.bdf")
         self.canvas = self.matrix.CreateFrameCanvas()
         self.imgCanvas = self.matrix.CreateFrameCanvas()
-        self.imagesLoaded = False
         while True:
             self.readArrivals()
             self.runTime = datetime.datetime.now() - self.startTime
@@ -86,17 +87,15 @@ class matrixBoard():
         
         
         # first train
-        # if not self.imagesLoaded:
-        self.canvas.SetImage(self.logo, 0, 1)
+        self.canvas.SetImage(self.logo, 0, 0)
         graphics.DrawText(self.canvas, self.font, 10, 7, graphics.Color(255, 255, 255), self.arrivals[0]['Next stop'])
-        graphics.DrawText(self.canvas, self.font, 0, 15, graphics.Color(255, 255, 255), self.arrivals[0]['Time until'])
+        graphics.DrawText(self.canvas, self.timeFont, 0, 15, graphics.Color(255, 255, 255), self.arrivals[0]['Time until'])
 
         if len(self.arrivals) < 2: return None
         # second train
-        # if not self.imagesLoaded:
         self.canvas.SetImage(self.logo, 0, 16)
         graphics.DrawText(self.canvas, self.font, 10, 23, graphics.Color(255, 255, 255), self.arrivals[1]['Next stop'])
-        graphics.DrawText(self.canvas, self.font, 0, 31, graphics.Color(255, 255, 255), self.arrivals[1]['Time until'])
+        graphics.DrawText(self.canvas, self.timeFont, 0, 31, graphics.Color(255, 255, 255), self.arrivals[1]['Time until'])
 
         self.imagesLoaded = True
 
